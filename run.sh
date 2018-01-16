@@ -3,4 +3,4 @@
 port=2000
 
 cd out
-java enchatter.ChatRoomServer -p $port
+java enchatter.Enchatter -p $port

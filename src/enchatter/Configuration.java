@@ -75,4 +75,8 @@ public class Configuration {
     public void unfreeze() {
         mFrozen = false;
     }
+
+    public boolean isFrozen() {
+        return mFrozen;
+    }
 }

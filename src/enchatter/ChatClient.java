@@ -2,11 +2,13 @@ package enchatter;
 
 import java.util.ArrayDeque;
 
-public class ChatRoomServer {
+// TODO refactor duplicated configuration code in ChatClient and ChatRoomServer
+
+public class ChatClient {
     private Configuration mConfiguration;
     private ArrayDeque<ArgToken> mAllTokens;
 
-    public ChatRoomServer() {
+    public ChatClient() {
         mConfiguration = new Configuration();
         mAllTokens = null;
     }

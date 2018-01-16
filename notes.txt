@@ -1,0 +1,4 @@
+turn following errors to tests
+==============================
+java enchatter.ChatRoomServer -p 39 -d
+Server port is: -1
