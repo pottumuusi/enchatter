@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<enchatter_configuration>
+	<port number="1234" role="test"></port>
+</enchatter_configuration>
