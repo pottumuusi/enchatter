@@ -1,112 +1,53 @@
-# install_destination := usr_local_bin
-# add_scripts_to_path := true
-# be_fancy := false
-# repo_root := /root/my/config/useful-files
-# home_dir := /root
-
 ECHO=@$$(which echo)
 
-ALL_TARGETS := server
-ALL_TARGETS :+ client
+ALL_TARGETS := app
 ALL_TARGETS :+ tests
 
-# Some variables including repo_root are added by configure to actual
-# Makefile.  They should all be in lower case.
-SRC_DIR := $(repo_root)/src
-OUT_DIR := $(repo_root)/out
-LIB_DIR := $(repo_root)/lib
+# Assign variables created by configure (all lowercase) to Make variables.
+ROOT_DIR := $(repo_root)
 
+OUT_DIR := $(ROOT_DIR)/out
+BIN_DIR := $(OUT_DIR)/bin
+LIB_DIR := $(ROOT_DIR)/lib
+SRC_DIR := $(ROOT_DIR)/src
+APP_DIR := $(SRC_DIR)/app
+TEST_DIR := $(SRC_DIR)/test
+
+ENCHATTER_BIN := $(BIN_DIR)/enchatter
+
+# REPO_NAME := omnichat
 REPO_NAME := enchatter
-# GLOBAL_CONCON_LINK_PATH := /usr/local/bin/concon
-# REPO_ENVPATH_ENTRY := PATH=\"\$$HOME/.$(REPO_NAME)/bin:\$$PATH\"
 
-# HOME_REPO_DIR := $$HOME/.$(REPO_NAME)
-
-COMMON_PATHS_LINK := common_paths
-PROCESSED_COMMON_PATHS := $(BIN_DIR)/common/common_paths.sh
-HOME_LINK_TO_REPO := $(HOME_REPO_DIR)/bin
-REPO_BIN_REPO_DIR := $(BIN_DIR)/$(REPO_NAME)
-REPO_BIN_COMMON_PATHS := $(REPO_BIN_REPO_DIR)/$(COMMON_PATHS_LINK)
-USR_LOCAL_BIN_REPO_DIR := /usr/local/bin/$(REPO_NAME)
-USR_LOCAL_BIN_COMMON_PATHS := $(USR_LOCAL_BIN_REPO_DIR)/$(COMMON_PATHS_LINK)
-
-LINE_REMOVED_TAG := >>> line removed by $(REPO_NAME) uninstall process <<<
-
-SEARCH_FOR_PATH_ENTRY_IN_SUBSHELL := \
-	"$$(cat $$HOME/.profile | grep "$$(echo $(REPO_ENVPATH_ENTRY))")"
+GLOBAL_ENCHATTER_LINK_PATH := /usr/local/bin/enchatter
 
 # Make does not consider implicit rules for PHONY targets
-.PHONY: all clean testrun install uninstall $(ALL_TARGETS)
-
-# Could not use pipe as delimiter so substituting first
-define remove_home_repo_dir_from_path
-	sed -i 's|'"$$(echo $(REPO_ENVPATH_ENTRY))"'|$(LINE_REMOVED_TAG)|' \
-		$$HOME/.profile
-	sed -i '/$(LINE_REMOVED_TAG)/d' $$HOME/.profile
-endef
+.PHONY: all clean testrun install uninstall clean-app clean-enchatter $(ALL_TARGETS)
 
 define subproject_make_with_common_attributes
-	$(eval SUBPROJECT=$1)
-	$(eval PROJECT_OUT=$(OUT_DIR)/$(SUBPROJECT))
+	$(eval SUBPROJECT_NAME=$1)
+	$(eval SUBPROJECT_PATH=$2)
+	$(eval SUBPROJECT_TARGET=$3)
+	$(eval PROJECT_OUT=$(OUT_DIR)/$(SUBPROJECT_NAME))
 
-	if [ ! -d $(PROJECT_OUT) ] ; then mkdir -p $(PROJECT_OUT) ; fi
-	if [ ! -d $(BIN_DIR) ] ; then mkdir -p $(BIN_DIR) ; fi
+	echo "calling makefile of subproject, name: $(SUBPROJECT_NAME)"
+	echo "calling makefile of subproject, path: $(SUBPROJECT_PATH)"
+	echo "calling makefile of subproject, out: $(PROJECT_OUT)"
 
-	$(MAKE) -C $(SUBPROJECT) \
-		REPOROOT=$(repo_root) \
-		BINDIR=$(BIN_DIR) \
+	$(MAKE) -C $(SUBPROJECT_PATH) \
+		ROOTDIR=$(ROOT_DIR) \
+		PROJECTROOT=$(SUBPROJECT_PATH) \
 		PROJECTOUT=$(PROJECT_OUT) \
-		all
+		OUTDIR=$(OUT_DIR) \
+		$(SUBPROJECT_TARGET)
 endef
 
 define install_to_usr_local_bin
-	if [ ! -d "$(USR_LOCAL_BIN_REPO_DIR)" ] ; then \
-		mkdir -p $(USR_LOCAL_BIN_REPO_DIR) ; \
-	fi
-
 	$(call add_nontexistent_symlink, \
-		$(BIN_DIR)/concon, $(GLOBAL_CONCON_LINK_PATH))
-	$(call add_nontexistent_symlink, \
-		$(PROCESSED_COMMON_PATHS) \
-		$(USR_LOCAL_BIN_COMMON_PATHS))
+		$(ENCHATTER_BIN), $(GLOBAL_ENCHATTER_LINK_PATH))
 endef
 
 define usr_local_bin_uninstall
-	rm $(GLOBAL_CONCON_LINK_PATH)
-	rm -r $(USR_LOCAL_BIN_REPO_DIR)
-endef
-
-# ifeq statements inside define blocks are treated as shell commands
-define install_to_home
-	$(eval ENVPATH_ENTRY_IN_PROFILE=$(shell \
-		if [ -n $(SEARCH_FOR_PATH_ENTRY_IN_SUBSHELL) ] ; then \
-			echo "y" ; else echo "n" ; \
-		fi))
-
-	if [ "n" = "$(ENVPATH_ENTRY_IN_PROFILE)" ] ; then \
-		if [ ! -d "$(HOME_REPO_DIR)" ] ; then \
-			mkdir -p $(HOME_REPO_DIR) ; \
-		fi ; \
-		if [ ! -d "$(REPO_BIN_REPO_DIR)" ] ; then \
-			mkdir -p $(REPO_BIN_REPO_DIR) ; \
-		fi ; \
-		if [ ! -L $(REPO_BIN_COMMON_PATHS) ] ; then \
-			ln -s \
-				$(PROCESSED_COMMON_PATHS) \
-				$(REPO_BIN_COMMON_PATHS) ; \
-		fi ; \
-		if [ ! -L $(HOME_LINK_TO_REPO) ] ; then \
-			ln -s \
-				$(BIN_DIR) \
-				$(HOME_LINK_TO_REPO) ; \
-		fi ; \
-		echo "$(REPO_ENVPATH_ENTRY)" >> $$HOME/.profile ; \
-	fi
-endef
-
-define home_uninstall
-	rm -r $(HOME_REPO_DIR)
-	$(call remove_home_repo_dir_from_path)
+	rm $(GLOBAL_ENCHATTER_LINK_PATH)
 endef
 
 define add_nontexistent_symlink
@@ -118,24 +59,15 @@ define add_nontexistent_symlink
 	fi
 endef
 
-define create_project_directories
-	if [ ! -d "$(DATA_DIR)" ] ; then mkdir $(DATA_DIR) ; fi
+define clear_vars
+	$(eval JAVA_FILES=)
 endef
 
-define print_install_done
-	$(ECHO) ""
-	$(ECHO) "+==============+"
-	$(ECHO) "| INSTALL DONE |"
-	$(ECHO) "+==============+"
-	$(ECHO) ""
-endef
+define find_all_java_files_under
+	$(eval FIND_DIR=$(1))
 
-define print_uninstall_done
-	$(ECHO) ""
-	$(ECHO) "+================+"
-	$(ECHO) "| UNINSTALL DONE |"
-	$(ECHO) "+================+"
-	$(ECHO) ""
+	$(info finding java files)
+	$(eval JAVA_FILES=$(shell find $(FIND_DIR) -name "*.java"))
 endef
 
 all: $(ALL_TARGETS)
@@ -144,50 +76,32 @@ clean:
 	if [ -d "$(OUT_DIR)" ] ; then rm -r $(OUT_DIR) ; fi
 	if [ -d "$(BIN_DIR)" ] ; then rm -r $(BIN_DIR) ; fi
 
-# Append slash to avoid circular common
-common: common/ 
-	$(call subproject_make_with_common_attributes, $@)
-
-concon: env/concon
-	$(call subproject_make_with_common_attributes, $^)
-
 install:
-	$(call create_project_directories)
-ifeq ($(add_scripts_to_path),true)
-ifeq ($(install_destination),home)
-	$(call install_to_home)
-ifeq ($(be_fancy),true)
-	$(call print_install_done)
-endif # be_fancy
-	$(ECHO) ""
-	$(ECHO) "Run \"source ~/.profile\" to add scripts to PATH without"
-	$(ECHO) "the need to open a new shell."
-	$(ECHO) ""
-endif #install_destination,home
-ifeq ($(install_destination),usr_local_bin)
 	$(call install_to_usr_local_bin)
-ifeq ($(be_fancy),true)
-	$(call print_install_done)
-endif # be_fancy
-endif # install_destination,usr_local_bin
-endif # add_scripts_to_path
+	# If installed binaries need a directory for data, consider adding
+	# a hidden directory to home directory of user.
 
 uninstall:
-ifeq ($(add_scripts_to_path),true)
-ifeq ($(install_destination),home)
-	$(call home_uninstall)
-ifeq ($(be_fancy),true)
-	$(call print_uninstall_done)
-endif # be_fancy
-	$(ECHO) ""
-	$(ECHO) "Run \"source ~/.profile\" to remove directories related to"
-	$(ECHO) "$(REPO_NAME) from PATH without the need to open a new shell."
-	$(ECHO) ""
-endif # install_destination,home
-ifeq ($(install_destination),usr_local_bin)
 	$(call usr_local_bin_uninstall)
-ifeq ($(be_fancy),true)
-	$(call print_uninstall_done)
-endif # be_fancy
-endif # install_destination,usr_local_bin
-endif # add_scripts_to_path
+
+app: $(APP_DIR)
+	$(call subproject_make_with_common_attributes, $@, $<, all)
+
+clean-app:
+	$(call subproject_make_with_common_attributes, app, $(APP_DIR), clean)
+
+clean-enchatter:
+	$(call subproject_make_with_common_attributes, app, $(APP_DIR), clean-enchatter)
+
+tests:
+	$(call clear_vars)
+	$(call find_all_java_files_under, $(TEST_DIR))
+	# find all test java files
+	echo "building tests"
+
+# Append slash to avoid circular common
+# common: common/ 
+# 	$(call subproject_make_with_common_attributes, $@)
+# 
+# concon: env/concon
+# 	$(call subproject_make_with_common_attributes, $^)
