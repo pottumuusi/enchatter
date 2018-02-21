@@ -1,0 +1,10 @@
+#!/bin/bash
+
+rundir=$(cd $(dirname $0) && pwd)
+cd $rundir
+
+echo "Generating makefiles"
+touch Makefile
+echo "repo_root := $rundir" >> Makefile
+echo "" >> Makefile
+cat Makefile.in >> Makefile
