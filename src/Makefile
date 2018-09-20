@@ -78,15 +78,12 @@ $(OMNICHAT_BIN): $(CORE_BIN) $(CLI_BIN)
 	$(ECHO) omnichat_bin not implemented!
 
 $(LIBKTLS): $(LIBKTLS_OBJ_FILES)
-	$(ECHO) LIBKTLS deps: $^
 	ar rvs $@ $^
 
 $(LIBKTLS_OBJ_FILE1): $(LIBKTLS_SRC_FILE1)
-	$(ECHO) file1 rule, target: $@ dep: $<
 	$(call compile_no_link_from_to, $<, $@)
 
 $(LIBKTLS_OBJ_FILE2): $(LIBKTLS_SRC_FILE2)
-	$(ECHO) file2 rule, target: $@ dep: $<
 	$(call compile_no_link_from_to, $<, $@)
 
 $(CORE_BIN): $(CORE_SRC_FILES) $(LIBKTLS)
