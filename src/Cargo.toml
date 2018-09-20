@@ -1,0 +1,11 @@
+[package]
+name = "omnichat"
+version = "0.1.0"
+authors = ["Aleksi Backman <bddubbb@gmail.com>"]
+
+[dependencies]
+libc = "0.2.0"
+
+[[bin]]
+name = "core"
+path = "src/core/main.rs"
