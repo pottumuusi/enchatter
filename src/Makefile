@@ -6,6 +6,7 @@ ALL_TARGETS := \
 	omnichat
 	# tests
 
+# [OBSOLETE COMMENT, FIXME]
 # Assign variables created by configure (all lowercase) to Make variables.
 ROOT_DIR := $(omnichat_root)
 
