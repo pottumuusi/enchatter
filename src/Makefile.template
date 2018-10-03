@@ -1,14 +1,12 @@
-omnichat_root := /mnt/shared_home/home/tank/my/codes/projects/chat/enchatter/src
-
 ECHO=@$$(which echo)
 
 ALL_TARGETS := \
 	omnichat
 	# tests
 
-# [OBSOLETE COMMENT, FIXME]
 # Assign variables created by configure (all lowercase) to Make variables.
-ROOT_DIR := $(omnichat_root)
+PROJECT_ROOT_DIR := $(omnichat_root)
+ROOT_DIR := $(PROJECT_ROOT_DIR)/src
 
 OUT_DIR := $(ROOT_DIR)/out
 BIN_DIR := $(OUT_DIR)/bin

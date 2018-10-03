@@ -1,0 +1,8 @@
+#!/bin/bash
+
+readonly project_root="$(cd $(dirname $0) && pwd)"
+readonly main_makefile_full_path="${project_root}/src/Makefile"
+
+echo "omnichat_root := ${project_root}" > src/Makefile
+echo "" >> src/Makefile
+cat src/Makefile.template >> src/Makefile
