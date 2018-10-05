@@ -15,6 +15,12 @@ SRC_DIR := $(ROOT_DIR)/src
 LIB_OUT_DIR := $(OUT_DIR)/lib
 LIBKTLS_OUT_DIR := $(LIB_OUT_DIR)/libktls
 
+EVERY_OUT_DIR := \
+	$(OUT_DIR) \
+	$(BIN_DIR) \
+	$(LIB_OUT_DIR) \
+	$(LIBKTLS_OUT_DIR)
+
 RUST_OUT_DIR := $(ROOT_DIR)/target
 # TODO
 # Tell cargo to output file to bin dir instead
@@ -49,7 +55,7 @@ REPO_NAME := omnichat
 
 # Make does not consider implicit rules for PHONY targets
 # .PHONY: all clean testrun install uninstall clean-app clean-enchatter $(ALL_TARGETS)
-.PHONY: all clean core cli libktls $(ALL_TARGETS)
+.PHONY: all out clean core cli libktls $(ALL_TARGETS)
 
 define compile_no_link_from_to
 	$(eval IN_PATH=$1)
@@ -58,11 +64,18 @@ define compile_no_link_from_to
 	$(CC) -o $(OUT_PATH) -c $(IN_PATH)
 endef
 
+define create_out_directory_structure
+	$(foreach dir, $(EVERY_OUT_DIR), mkdir -p $(dir))
+endef
+
 # TODO
 # Create test target. First test could check linking C with Rust
 # successfully.
 
-all: $(ALL_TARGETS)
+all: out $(ALL_TARGETS)
+
+out:
+	$(call create_out_directory_structure)
 
 clean:
 	rm -f $(LIBKTLS)
