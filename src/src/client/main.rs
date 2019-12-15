@@ -2,6 +2,8 @@ use std::io;
 use std::io::prelude::*;
 use std::net::TcpStream;
 
+const CFG_DEBUG_ON: bool = true; // TODO make global over the files
+
 // TODO rename file
 
 fn main() {
@@ -36,17 +38,28 @@ fn read_user_input() {
     buf.clear();
     stdin.lock().read_line(&mut buf); // TODO handle return value
 
-    println!("buf is: {}", buf);
-    println!("buf.trim().to_string() is: {}", buf.trim().to_string());
+    #[cfg(CFG_DEBUG_ON)]
+    {
+        println!("buf is: {}", buf);
+        println!("buf.trim().to_string() is: {}", buf.trim().to_string());
+    }
 
     buf_sanitized.clear();
     buf_sanitized = buf.trim().to_string();
 
-    println!("buf_sanitized is: {}", buf_sanitized);
+    #[cfg(CFG_DEBUG_ON)]
+    {
+        println!("buf_sanitized is: {}", buf_sanitized);
+    }
 }
 
 fn do_connect() -> std::io::Result<()> {
-    let mut stream = TcpStream::connect("127.0.0.1:7878")?;
-    stream.write(&[1])?;
+    let mut stream = TcpStream::connect("127.0.0.1:7878")?; // TODO error handling
+
+    // h -> 104
+    // e -> 101
+    // l -> 108
+    // o -> 111
+    stream.write(&[104, 101, 108, 108, 111, 0])?;
     Ok(())
 }
