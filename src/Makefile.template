@@ -1,9 +1,5 @@
 ECHO=@$$(which echo)
 
-ALL_TARGETS := \
-	omnichat
-	# tests
-
 # Assign variables created by configure (all lowercase) to Make variables.
 PROJECT_ROOT_DIR := $(omnichat_root)
 ROOT_DIR := $(PROJECT_ROOT_DIR)/src
@@ -30,11 +26,12 @@ RUST_BIN_DIR := $(RUST_OUT_DIR)/debug
 
 OMNICHAT_BIN := $(BIN_DIR)/omnichat
 CORE_BIN := $(RUST_BIN_DIR)/core
-CLI_BIN := $(BIN_DIR)/cli
+CLIENT_BIN := $(RUST_BIN_DIR)/client
 LIBKTLS := $(LIBKTLS_OUT_DIR)/libktls.a
 
 LIBKTLS_SRC_DIR := $(SRC_DIR)/libktls
 CORE_SRC_DIR := $(SRC_DIR)/core
+CLIENT_SRC_DIR := $(SRC_DIR)/client
 
 # TODO
 # Seriously should do this with submake. Then can use general rule for .c files
@@ -48,14 +45,15 @@ LIBKTLS_OBJ_FILES := \
 	$(LIBKTLS_OBJ_FILE1) \
 	$(LIBKTLS_OBJ_FILE2)
 CORE_SRC_FILES := $(wildcard $(CORE_SRC_DIR)/*.rs)
+CLIENT_SRC_FILES := $(wildcard $(CLIENT_SRC_DIR)/*.rs)
 
 REPO_NAME := omnichat
 
 # GLOBAL_ENCHATTER_LINK_PATH := /usr/local/bin/enchatter
 
 # Make does not consider implicit rules for PHONY targets
-# .PHONY: all clean testrun install uninstall clean-app clean-enchatter $(ALL_TARGETS)
-.PHONY: all out clean core cli libktls $(ALL_TARGETS)
+# .PHONY: all clean testrun install uninstall clean-app clean-enchatter
+.PHONY: all out clean core cli libktls
 
 define compile_no_link_from_to
 	$(eval IN_PATH=$1)
@@ -71,6 +69,8 @@ endef
 # TODO
 # Create test target. First test could check linking C with Rust
 # successfully.
+#
+# Rust unit tests are to be ran by using 'cargo test'
 
 all: out $(ALL_TARGETS)
 
@@ -82,11 +82,14 @@ clean:
 	rm -f $(LIBKTLS_OBJ_FILES)
 	rm -rf $(RUST_OUT_DIR)
 
-omnichat: $(OMNICHAT_BIN)
+omnichat: core client
 	$(ECHO) Omnichat build top level still empty!
 
-$(OMNICHAT_BIN): $(CORE_BIN) $(CLI_BIN)
-	$(ECHO) omnichat_bin not implemented!
+core: $(CORE_BIN)
+	$(ECHO) core build done
+
+client: $(CLIENT_BIN)
+	$(ECHO) client build done
 
 $(LIBKTLS): $(LIBKTLS_OBJ_FILES)
 	ar rvs $@ $^
@@ -97,8 +100,8 @@ $(LIBKTLS_OBJ_FILE1): $(LIBKTLS_SRC_FILE1)
 $(LIBKTLS_OBJ_FILE2): $(LIBKTLS_SRC_FILE2)
 	$(call compile_no_link_from_to, $<, $@)
 
-$(CORE_BIN): $(CORE_SRC_FILES) $(LIBKTLS)
-	cd $(CORE_SRC_DIR) && RUSTFLAGS="-L $(LIBKTLS_OUT_DIR)" cargo build
+$(CLIENT_BIN): $(CLIENT_SRC_FILES)
+	cd $(CORE_SRC_DIR) && cargo build --bin client
 
-$(CLI_BIN):
-	$(ECHO) cli rule not implemented!
+$(CORE_BIN): $(CORE_SRC_FILES) $(LIBKTLS)
+	cd $(CORE_SRC_DIR) && RUSTFLAGS="-L $(LIBKTLS_OUT_DIR)" cargo build --bin core
