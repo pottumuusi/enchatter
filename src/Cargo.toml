@@ -9,3 +9,7 @@ libc = "0.2.0"
 [[bin]]
 name = "core"
 path = "src/core/main.rs"
+
+[[bin]]
+name = "client"
+path = "src/client/main.rs"
