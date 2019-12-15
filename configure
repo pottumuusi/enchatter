@@ -3,6 +3,8 @@
 readonly project_root="$(cd $(dirname $0) && pwd)"
 readonly main_makefile_full_path="${project_root}/src/Makefile"
 
-echo "omnichat_root := ${project_root}" > src/Makefile
-echo "" >> src/Makefile
+# TODO
+# check that topmost directory (basename) is omnichat. Better than nothing.
+
+echo -e "omnichat_root := ${project_root}\n" > src/Makefile
 cat src/Makefile.template >> src/Makefile
