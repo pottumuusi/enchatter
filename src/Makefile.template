@@ -27,11 +27,13 @@ RUST_BIN_DIR := $(RUST_OUT_DIR)/debug
 OMNICHAT_BIN := $(BIN_DIR)/omnichat
 CORE_BIN := $(RUST_BIN_DIR)/core
 CLIENT_BIN := $(RUST_BIN_DIR)/client
+SERVER_BIN := $(RUST_BIN_DIR)/server
 LIBKTLS := $(LIBKTLS_OUT_DIR)/libktls.a
 
 LIBKTLS_SRC_DIR := $(SRC_DIR)/libktls
 CORE_SRC_DIR := $(SRC_DIR)/core
 CLIENT_SRC_DIR := $(SRC_DIR)/client
+SERVER_SRC_DIR := $(SRC_DIR)/server
 
 # TODO
 # Seriously should do this with submake. Then can use general rule for .c files
@@ -46,6 +48,7 @@ LIBKTLS_OBJ_FILES := \
 	$(LIBKTLS_OBJ_FILE2)
 CORE_SRC_FILES := $(wildcard $(CORE_SRC_DIR)/*.rs)
 CLIENT_SRC_FILES := $(wildcard $(CLIENT_SRC_DIR)/*.rs)
+SERVER_SRC_FILES := $(wildcard $(SERVER_SRC_DIR)/*.rs)
 
 REPO_NAME := omnichat
 
@@ -91,6 +94,9 @@ core: $(CORE_BIN)
 client: $(CLIENT_BIN)
 	$(ECHO) client build done
 
+server: $(SERVER_BIN)
+	$(ECHO) server build done
+
 $(LIBKTLS): $(LIBKTLS_OBJ_FILES)
 	ar rvs $@ $^
 
@@ -101,7 +107,10 @@ $(LIBKTLS_OBJ_FILE2): $(LIBKTLS_SRC_FILE2)
 	$(call compile_no_link_from_to, $<, $@)
 
 $(CLIENT_BIN): $(CLIENT_SRC_FILES)
-	cd $(CORE_SRC_DIR) && cargo build --bin client
+	cd $(SRC_DIR) && cargo build --bin client
+
+$(SERVER_BIN): $(SERVER_SRC_FILES)
+	cd $(SRC_DIR) && cargo build --bin server
 
 $(CORE_BIN): $(CORE_SRC_FILES) $(LIBKTLS)
-	cd $(CORE_SRC_DIR) && RUSTFLAGS="-L $(LIBKTLS_OUT_DIR)" cargo build --bin core
+	cd $(SRC_DIR) && RUSTFLAGS="-L $(LIBKTLS_OUT_DIR)" cargo build --bin core
