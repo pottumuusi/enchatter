@@ -1,4 +1,4 @@
-# enchatter
+# omnichat
 Command line chat program
 
 ## Installing dependencies
