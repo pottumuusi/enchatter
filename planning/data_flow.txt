@@ -1,0 +1,19 @@
+About data flow
+===============
+
+The main thing is to move messages (text) from one place to another in sync.
+
+Managing consistency of message order
+-------------------------------------
+* One source of truth?
+	* Which server?
+* Sending a message to any party, including self
+	1. User passes message to a client process
+	2. Client process sends message to server
+	3. Server receives message
+	4. Server updates history
+	5. Server sends history delta to connected clients
+	6. Client receives history delta
+	7. Client updates history
+	8. User views history (using any wanted program)
+* Can there be conflicts? How to handle conflicts?
