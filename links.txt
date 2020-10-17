@@ -1,0 +1,17 @@
+# bash - How to determine function name from inside a function
+https://stackoverflow.com/questions/1835943/how-to-determine-function-name-from-inside-a-function
+
+# Parsing command line arguments - Command line applications in Rust
+https://rust-cli.github.io/book/tutorial/cli-args.html
+
+# Accepting command line arguments - The rust programming language
+https://doc.rust-lang.org/book/ch12-01-accepting-command-line-arguments.html
+
+# Closing issues via pull requests - The github blog
+https://github.blog/2013-05-14-closing-issues-via-pull-requests/
+
+# Workspaces - The cargo book
+https://doc.rust-lang.org/cargo/reference/workspaces.html
+
+# Cargo workspaces - The rust programming language
+https://doc.rust-lang.org/book/ch14-03-cargo-workspaces.html
