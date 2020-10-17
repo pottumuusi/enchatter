@@ -8,6 +8,8 @@ OUT_DIR := $(ROOT_DIR)/out
 BIN_DIR := $(OUT_DIR)/bin
 LIB_DIR := $(ROOT_DIR)/lib
 SRC_DIR := $(ROOT_DIR)/src
+SCRIPTS_DIR := $(PROJECT_ROOT_DIR)/scripts
+SCRIPTS_DEPS_DIR := $(SCRIPTS_DIR)/deps
 LIB_OUT_DIR := $(OUT_DIR)/lib
 LIBKTLS_OUT_DIR := $(LIB_OUT_DIR)/libktls
 
@@ -94,6 +96,8 @@ core: out $(CORE_BIN)
 	$(ECHO) core build done
 
 client: out $(CLIENT_BIN)
+	test -d $(SCRIPTS_DEPS_DIR) || mkdir $(SCRIPTS_DEPS_DIR)
+	cp $(CLIENT_BIN) $(SCRIPTS_DEPS_DIR)/
 	$(ECHO) client build done
 
 server: out $(SERVER_BIN)
