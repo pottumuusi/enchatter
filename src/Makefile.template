@@ -52,8 +52,6 @@ SERVER_SRC_FILES := $(wildcard $(SERVER_SRC_DIR)/*.rs)
 
 REPO_NAME := omnichat
 
-# GLOBAL_ENCHATTER_LINK_PATH := /usr/local/bin/enchatter
-
 define compile_no_link_from_to
 	$(eval IN_PATH=$1)
 	$(eval OUT_PATH=$2)
