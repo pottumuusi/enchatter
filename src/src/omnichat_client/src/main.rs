@@ -1,12 +1,26 @@
 use std::io;
+use std::env;
 use std::io::prelude::*;
 use std::net::TcpStream;
+
+use omnichat_utils;
 
 const CFG_DEBUG_ON: bool = true; // TODO make global over the files
 
 // TODO rename file
 
 fn main() {
+    // TODO handle 0 number of arguments. Currently will crash if no arguments
+    // provided and client is ran.
+    let args: Vec<String> = env::args().collect();
+    let arg1 = &args[1];
+
+    println!("arg1 is: {}", arg1);
+
+    omnichat_utils::omnichat_args::try_me();
+
+    return;
+
     // No handling for user input yet
     let read_input:bool = false;
 

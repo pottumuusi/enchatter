@@ -4,4 +4,5 @@ members = [
 	"omnichat_client",
 	"omnichat_server",
 	"omnichat_core",
+	"omnichat_utils",
 ]
