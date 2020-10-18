@@ -80,7 +80,7 @@ MAIN_TARGETS := \
 	core \
 	client \
 	server \
-	$(LIBKTLS)
+	libktls
 
 all: $(MAIN_TARGETS)
 
@@ -100,10 +100,13 @@ client: out $(CLIENT_BIN)
 	cp $(CLIENT_BIN) $(SCRIPTS_DEPS_DIR)/
 	$(ECHO) client build done
 
+libktls: out $(LIBKTLS)
+	$(ECHO) libktls build done
+
 server: out $(SERVER_BIN)
 	$(ECHO) server build done
 
-$(LIBKTLS): out $(LIBKTLS_OBJ_FILES)
+$(LIBKTLS): $(LIBKTLS_OBJ_FILES)
 	ar rvs $@ $^
 
 $(LIBKTLS_OBJ_FILE1): $(LIBKTLS_SRC_FILE1)
