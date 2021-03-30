@@ -1,6 +1,8 @@
 # omnichat
 Command line chat program
 
+[![Build Status](https://travis-ci.com/pottumuusi/omnichat.svg?branch=master)](https://travis-ci.com/pottumuusi/omnichat)
+
 ## Installing dependencies
 ```
 scripts/install_deps.sh
