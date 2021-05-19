@@ -19,17 +19,16 @@ EVERY_OUT_DIR := \
 	$(LIB_OUT_DIR) \
 	$(LIBKTLS_OUT_DIR)
 
-RUST_OUT_DIR := $(ROOT_DIR)/target
+RUST_OUT_DIR := $(SRC_DIR)/target
 # TODO
 # Tell cargo to output file to bin dir instead
 RUST_BIN_DIR := $(RUST_OUT_DIR)/debug
 
 # APP_DIR := $(SRC_DIR)/app
 
-OMNICHAT_BIN := $(BIN_DIR)/omnichat
-CORE_BIN := $(RUST_BIN_DIR)/core
-CLIENT_BIN := $(RUST_BIN_DIR)/client
-SERVER_BIN := $(RUST_BIN_DIR)/server
+CORE_BIN := $(RUST_BIN_DIR)/omnichat_core
+CLIENT_BIN := $(RUST_BIN_DIR)/omnichat_client
+SERVER_BIN := $(RUST_BIN_DIR)/omnichat_server
 LIBKTLS := $(LIBKTLS_OUT_DIR)/libktls.a
 
 LIBKTLS_SRC_DIR := $(SRC_DIR)/libktls
@@ -116,10 +115,10 @@ $(LIBKTLS_OBJ_FILE2): $(LIBKTLS_SRC_FILE2)
 	$(call compile_no_link_from_to, $<, $@)
 
 $(CLIENT_BIN): $(CLIENT_SRC_FILES)
-	cd $(SRC_DIR) && cargo build --bin client
+	cd $(SRC_DIR) && cargo build --bin omnichat_client
 
 $(SERVER_BIN): $(SERVER_SRC_FILES)
-	cd $(SRC_DIR) && cargo build --bin server
+	cd $(SRC_DIR) && cargo build --bin omnichat_server
 
 $(CORE_BIN): $(CORE_SRC_FILES) $(LIBKTLS)
-	cd $(SRC_DIR) && RUSTFLAGS="-L $(LIBKTLS_OUT_DIR)" cargo build --bin core
+	cd $(SRC_DIR) && RUSTFLAGS="-L $(LIBKTLS_OUT_DIR)" cargo build --bin omnichat_core
